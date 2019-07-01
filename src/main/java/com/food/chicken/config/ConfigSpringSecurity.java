@@ -21,7 +21,13 @@ public class ConfigSpringSecurity extends WebSecurityConfigurerAdapter {
                 "/swagger-ui.html/**"
                 , "/swagger-resources/**"
                 , "/v2/api-docs"
-                , "/webjars/**");
+                , "/webjars/**"
+                , "/css/**"
+                , "/script/**"
+                , "image/**"
+                , "/fonts/**"
+                , "lib/**"
+        );
     }
 
     @Override
@@ -32,6 +38,7 @@ public class ConfigSpringSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers("/**").authenticated();
 
         http.formLogin()
+                .defaultSuccessUrl("/main.html")
                 .usernameParameter("username")
                 .passwordParameter("password");
 
