@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SearchHistoryRepository extends CrudRepository<SearchHistory, SearchHistoryPK> {
 
+    SearchHistory findByMemberUidAndKeyword(long memberUid, String keyword);
+
 }
