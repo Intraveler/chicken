@@ -1,5 +1,6 @@
 package com.food.chicken.model;
 
+import com.food.chicken.model.entity.Member;
 import com.food.chicken.repository.MemberRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
