@@ -109,10 +109,7 @@ public class SearchService {
         JsonNode documents = node.get("documents");
         JsonNode totalCount = node.get("meta").get("total_count");
         JsonNode isEnd = node.get("meta").get("is_end");
-
-        System.out.println(isEnd);
-
-
+        
         List<Location> locationList = new ArrayList<>();
         ObjectMapper rootObject = new ObjectMapper();
 
