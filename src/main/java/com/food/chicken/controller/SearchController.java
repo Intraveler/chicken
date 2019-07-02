@@ -21,7 +21,7 @@ import java.security.Principal;
 
 @RestController
 public class SearchController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SearchController.class);
+    private static final Logger log = LoggerFactory.getLogger(SearchController.class);
     private final SearchService searchService;
 
     public SearchController(SearchService searchService) {
@@ -47,13 +47,16 @@ public class SearchController {
                     .status(HttpStatus.OK)
                     .body(searchService.callApi(keyword, page));
 
-            LOGGER.info("--success [/keyword/location] api--");
+            log.debug("[SUCCESS] REST API [/keyword/location] || memberID={} || keyword={}", memberId, keyword);
 
         } catch (RestClientException e) { // 외부 에러
+            log.error("[FAIL] REST API [/keyword/location] || memberID={} || keyword={}", memberId, keyword, e);
             throw new ExternalException(e.getMessage());
         } catch (IOException e) { // 내부 알려진 에러
+            log.error("[FAIL] REST API [/keyword/location] || memberID={} || keyword={}", memberId, keyword, e);
             throw new InternalException(e.getMessage());
         } catch (Exception e) { // 잘 모르겠는 에러
+            log.error("[FAIL] REST API [/keyword/location] || memberID={} || keyword={}", memberId, keyword, e);
             throw new UnknownException(e.getMessage());
         }
 
@@ -72,11 +75,13 @@ public class SearchController {
                     .status(HttpStatus.OK)
                     .body(searchService.getKeywordHistoryByMember(memberId));
 
-            LOGGER.info("--success [/keyword/mykeyword] api--");
+            log.debug("[SUCCESS] REST API [/keyword/mykeyword] || memberID={}", memberId);
 
         } catch (IOException e) { // 내부 알려진 에러
+            log.error("[FAIL] REST API [/keyword/mykeyword] || memberID={}", memberId, e);
             throw new InternalException(e.getMessage());
         } catch (Exception e) { // 잘 모르겠는 에러
+            log.error("[FAIL] REST API [/keyword/mykeyword] || memberID={}", memberId, e);
             throw new UnknownException(e.getMessage());
         }
 
@@ -93,11 +98,11 @@ public class SearchController {
                     .status(HttpStatus.OK)
                     .body(searchService.getPopulateKeyword());
 
-            LOGGER.info("--success [/keyword/mykeyword] api--");
-
         } catch (IOException e) { // 내부 알려진 에러
+            log.error("[FAIL] REST API [/keyword/populate]", e);
             throw new InternalException(e.getMessage());
         } catch (Exception e) { // 잘 모르겠는 에러
+            log.error("[FAIL] REST API [/keyword/populate]", e);
             throw new UnknownException(e.getMessage());
         }
         return responseEntity;

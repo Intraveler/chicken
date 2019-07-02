@@ -12,6 +12,8 @@ import com.food.chicken.model.json.MySearchHistory;
 import com.food.chicken.repository.MemberRepository;
 import com.food.chicken.repository.SearchHistoryRepository;
 import com.food.chicken.repository.SearchStatisticsRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +37,7 @@ import java.util.NoSuchElementException;
 
 @Service
 public class SearchService {
+    private static final Logger log = LoggerFactory.getLogger(SearchService.class);
 
     @Value("${kakao.auth.prefix}")
     String kakaoApiAuthPrefix;
@@ -58,6 +61,8 @@ public class SearchService {
     }
 
     public void saveHistory(String id, String keyword) {
+        log.debug("[exec]saveHistory()");
+
         Member member = memberRepository.findById(id);
         long memberUid = member.getMemberUid();
 
@@ -77,6 +82,8 @@ public class SearchService {
     }
 
     private SearchHistory getHistoryData(long memberUid, String keyword) {
+        log.debug("[exec]getHistoryData()");
+
         try {
             return searchHistoryRepository.findByMemberUidAndKeyword(memberUid, keyword);
         } catch (Exception e) {
@@ -85,6 +92,8 @@ public class SearchService {
     }
 
     public void saveStatistics(String keyword) {
+        log.debug("[exec]saveStatistics()");
+
         SearchStatistics searchStatistics = getStatisticsData(keyword);
         if (searchStatistics != null) {
             searchStatistics.setCount(searchStatistics.getCount() + 1);
@@ -98,6 +107,8 @@ public class SearchService {
     }
 
     private SearchStatistics getStatisticsData(String keyword) {
+        log.debug("[exec]getStatisticsData()");
+
         try {
             return searchStatisticsRepository.findById(keyword).get();
         } catch (NoSuchElementException e) {
@@ -106,6 +117,8 @@ public class SearchService {
     }
 
     public String callApi(String keyword, String page) throws RestClientException, IOException {
+        log.debug("[exec]callApi()");
+
         String param = "query=" + keyword + "&" + "page=" + page;
         String result = restTemplate.exchange(requestUrl + param, HttpMethod.GET, getHeader(), String.class).getBody();
 
@@ -133,6 +146,8 @@ public class SearchService {
     }
 
     private Location setLocationModel(JsonNode jsonData, Location location) {
+        log.debug("[exec]setLocationModel()");
+
         location.setAddress_name(jsonData.get("address_name").textValue());
         location.setCategory_group_code(jsonData.get("category_group_code").textValue());
         location.setCategory_group_name(jsonData.get("category_group_name").textValue());
@@ -157,6 +172,7 @@ public class SearchService {
     }
 
     public String getKeywordHistoryByMember(String id) throws IOException {
+        log.debug("[exec]getKeywordHistoryByMember()");
 
         ObjectMapper mapper = new ObjectMapper();
         List<MySearchHistory> mySearchHistoryList = new ArrayList<>();
@@ -179,6 +195,8 @@ public class SearchService {
     }
 
     public String getPopulateKeyword() throws IOException {
+        log.debug("[exec]getPopulateKeyword()");
+
         ObjectMapper mapper = new ObjectMapper();
         Pageable pageable = PageRequest.of(0, 10, new Sort(Sort.Direction.DESC, "count"));
         Page<SearchStatistics> populateKeywordList = searchStatisticsRepository.findAll(pageable);
