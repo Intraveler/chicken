@@ -12,7 +12,6 @@ import com.food.chicken.model.json.MySearchHistory;
 import com.food.chicken.repository.MemberRepository;
 import com.food.chicken.repository.SearchHistoryRepository;
 import com.food.chicken.repository.SearchStatisticsRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +26,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -132,17 +132,18 @@ public class SearchService {
     }
 
     private Location setLocationModel(JsonNode jsonData, Location location) {
-        location.setAddress_name(jsonData.get("address_name").toString());
-        location.setCategory_group_code(jsonData.get("category_group_code").toString());
-        location.setCategory_group_name(jsonData.get("category_group_name").toString());
-        location.setCategory_name(jsonData.get("category_name").toString());
-        location.setDistance(jsonData.get("distance").toString());
-        location.setPhone(jsonData.get("phone").toString());
-        location.setPlace_name(jsonData.get("place_name").toString());
-        location.setPlace_url(jsonData.get("place_url").toString());
-        location.setRoad_address_name(jsonData.get("road_address_name").toString());
-        location.setX(jsonData.get("x").toString());
-        location.setY(jsonData.get("y").toString());
+        location.setAddress_name(jsonData.get("address_name").textValue());
+        location.setCategory_group_code(jsonData.get("category_group_code").textValue());
+        location.setCategory_group_name(jsonData.get("category_group_name").textValue());
+        location.setCategory_name(jsonData.get("category_name").textValue());
+        location.setDistance(jsonData.get("distance").textValue());
+        location.setId(jsonData.get("id").textValue());
+        location.setPhone(jsonData.get("phone").textValue());
+        location.setPlace_name(jsonData.get("place_name").textValue());
+        location.setPlace_url(jsonData.get("place_url").textValue());
+        location.setRoad_address_name(jsonData.get("road_address_name").textValue());
+        location.setX(jsonData.get("x").textValue());
+        location.setY(jsonData.get("y").textValue());
 
         return location;
     }
@@ -159,12 +160,14 @@ public class SearchService {
         ObjectMapper mapper = new ObjectMapper();
         List<MySearchHistory> mySearchHistoryList = new ArrayList<>();
         Member member = memberRepository.findById(id);
+        SimpleDateFormat format = new SimpleDateFormat("yy.MM.dd.");
 
         searchHistoryRepository
                 .findByMemberUidOrderByLastSearchDateDesc(member.getMemberUid())
                 .forEach(item -> {
                     MySearchHistory mySearchHistory = new MySearchHistory();
-                    BeanUtils.copyProperties(item, mySearchHistory);
+                    mySearchHistory.setKeyword(item.getKeyword());
+                    mySearchHistory.setLastSearchDate(format.format(item.getLastSearchDate()));
                     mySearchHistoryList.add(mySearchHistory);
                 });
 
