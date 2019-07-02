@@ -75,7 +75,7 @@ public class SearchService {
         searchHistoryRepository.save(searchHistory);
     }
 
-    public SearchHistory getHistoryData(long memberUid, String keyword) {
+    private SearchHistory getHistoryData(long memberUid, String keyword) {
         try {
             return searchHistoryRepository.findByMemberUidAndKeyword(memberUid, keyword);
         } catch (Exception e) {
@@ -96,7 +96,7 @@ public class SearchService {
         }
     }
 
-    public SearchStatistics getStatisticsData(String keyword) {
+    private SearchStatistics getStatisticsData(String keyword) {
         try {
             return searchStatisticsRepository.findById(keyword).get();
         } catch (NoSuchElementException e) {
@@ -131,7 +131,7 @@ public class SearchService {
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
     }
 
-    public Location setLocationModel(JsonNode jsonData, Location location) {
+    private Location setLocationModel(JsonNode jsonData, Location location) {
         location.setAddress_name(jsonData.get("address_name").toString());
         location.setCategory_group_code(jsonData.get("category_group_code").toString());
         location.setCategory_group_name(jsonData.get("category_group_name").toString());
@@ -147,7 +147,7 @@ public class SearchService {
         return location;
     }
 
-    public HttpEntity<String> getHeader() {
+    private HttpEntity<String> getHeader() {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         headers.set(HttpHeaders.AUTHORIZATION, kakaoApiAuthPrefix + " " + kakaoApiAuthKey);

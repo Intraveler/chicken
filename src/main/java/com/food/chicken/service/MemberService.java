@@ -25,7 +25,7 @@ public class MemberService {
     }
 
     // 입력 패스워드와 DB에 저장된 패스워드 비교
-    public boolean comparePassword(String originPassword, String dbPassword) {
+    private boolean comparePassword(String originPassword, String dbPassword) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         return bCryptPasswordEncoder.matches(originPassword, dbPassword);
     }
