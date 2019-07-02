@@ -1,5 +1,8 @@
 import React from 'react';
 import * as CallApiGet from '../util/CallApiGet';
+import {BootstrapTable,
+    TableHeaderColumn} from 'react-bootstrap-table';
+import '../../node_modules/react-bootstrap-table/css/react-bootstrap-table.css'
 
 class LocationSearch extends React.Component {
     constructor(props) {
@@ -63,6 +66,7 @@ class LocationSearch extends React.Component {
                         place_name={item.place_name}
                         place_url={item.place_url}
                         road_address_name={item.road_address_name}
+                        id={item.id}
                         key={num}/>);
                 })}
 
@@ -101,6 +105,7 @@ class LocationSearchResult extends React.Component {
                         placeName={this.props.place_name}
                         placeUrl={this.props.place_url}
                         roadAddressName={this.props.road_address_name}
+                        id={this.props.id}
                         closePopup={this.togglePopup.bind(this)}
                     />
                     : null
@@ -118,15 +123,17 @@ class Popup extends React.Component {
                     <h2>장소(업체)명 : {this.props.placeName}</h2>
                     <h3>카테고리 : {this.props.categoryName}</h3>
                     <h3>전화번호 : {this.props.phone}</h3>
-                    <h3>상세페이지 : {this.props.placeUrl}</h3>
+                    <h3>상세페이지 : <a href={`${this.props.placeUrl}`} target="_blank">확인하기(클릭)</a></h3>
                     <h3>지번주소 : {this.props.addressName}</h3>
                     <h3>도로명주소 : {this.props.roadAddressName}</h3>
+                    <h2>지도보기 : <a href={`https://map.kakao.com/link/to/${this.props.id}`} target="_blank">바로가기(클릭)</a></h2>
                     <button onClick={this.props.closePopup}>클릭 시 축소</button>
                 </div>
             </div>
         );
     }
 }
+
 
 class KeywordHistory extends React.Component {
     constructor(props) {
@@ -148,18 +155,13 @@ class KeywordHistory extends React.Component {
     render() {
         return(
             <div>
-                -- 키워드 히스토리 --
+                [ 키워드 히스토리 ]
                 <form onSubmit={this.handleSubmit}>
                     내 키워드 내역 확인 <input type="submit" value="확인하기" />
                 </form>
                 <button onClick={this.handleClear}> 접기 </button>
+                <KeywordHistoryResult data={this.state.data}/>
 
-                {this.state.data.map((item, num) => {
-                    return (<KeywordHistoryResult
-                        keyword={item.keyword}
-                        lastSearchDate={item.lastSearchDate}
-                        key={num}/>);
-                })}
             </div>
         );
     }
@@ -167,10 +169,20 @@ class KeywordHistory extends React.Component {
 
 class KeywordHistoryResult extends React.Component {
     render() {
-        return(
-            <li>{this.props.keyword} {this.props.lastSearchDate}</li>
+        return (
+            <div>
+                <BootstrapTable data={this.props.data}>
+                    <TableHeaderColumn isKey dataField='keyword'>
+                        검색키워드
+                    </TableHeaderColumn>
+                    <TableHeaderColumn dataField='lastSearchDate'>
+                        최근조회일
+                    </TableHeaderColumn>
+                </BootstrapTable>
+            </div>
         );
     }
+
 }
 
 class PopulateKeyword extends React.Component {
@@ -190,20 +202,15 @@ class PopulateKeyword extends React.Component {
         CallApiGet.getPopulateKeyword(this);
         event.preventDefault();
     }
+
     render() {
         return(
             <div>
-                -- 인기 검색어 TOP 10 --
+                [ 인기 검색어 TOP 10 ]
                 <form onSubmit={this.handleSubmit}>
-                    인기 검색어 확인 <input type="submit" value="Submit" />
-                </form>
-                <button onClick={this.handleClear}> 접기 </button>
-                {this.state.data.map((item, num) => {
-                    return (<PopulateKeywordResult
-                        keyword={item.keyword}
-                        count={item.count}
-                        key={num}/>);
-                })}
+                <input type="submit" value="Submit" />
+                </form> <span><button onClick={this.handleClear}> 접기 </button></span>
+                <PopulateKeywordResult data={this.state.data}/>
             </div>
         );
     }
@@ -211,8 +218,17 @@ class PopulateKeyword extends React.Component {
 
 class PopulateKeywordResult extends React.Component {
     render() {
-        return(
-            <li>{this.props.keyword} {this.props.count}</li>
+        return (
+        <div>
+            <BootstrapTable data={this.props.data}>
+                <TableHeaderColumn isKey dataField='keyword'>
+                    인기키워드
+                </TableHeaderColumn>
+                <TableHeaderColumn dataField='count'>
+                    조회수
+                </TableHeaderColumn>
+            </BootstrapTable>
+        </div>
         );
     }
 }
