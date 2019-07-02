@@ -14,6 +14,10 @@ import com.food.chicken.repository.SearchHistoryRepository;
 import com.food.chicken.repository.SearchStatisticsRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -166,6 +170,17 @@ public class SearchService {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         mapper.writeValue(out, mySearchHistoryList);
+
+        return new String(out.toByteArray());
+    }
+
+    public String getPopulateKeyword() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        Pageable pageable = PageRequest.of(0, 10, new Sort(Sort.Direction.DESC, "count"));
+        Page<SearchStatistics> populateKeywordList = searchStatisticsRepository.findAll(pageable);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        mapper.writeValue(out, populateKeywordList);
 
         return new String(out.toByteArray());
     }
