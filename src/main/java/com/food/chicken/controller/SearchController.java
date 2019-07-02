@@ -25,6 +25,7 @@ public class SearchController {
 
         try {
             searchService.saveHistory(memberId, keyword);
+            searchService.saveStatistics(keyword);
 
             LOGGER.info("--success [/keyword/location] api--");
 
