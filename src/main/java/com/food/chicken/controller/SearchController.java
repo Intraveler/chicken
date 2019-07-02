@@ -47,4 +47,28 @@ public class SearchController {
 
         return responseEntity;
     }
+
+    @RequestMapping(value = "/keyword/mykeyword", method = RequestMethod.GET)
+    public ResponseEntity searchKeywordHistory(Principal principal) {
+        String memberId = principal.getName();
+
+        ResponseEntity responseEntity;
+
+        try {
+            responseEntity = ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(searchService.getKeywordHistoryByMember(memberId));
+
+            LOGGER.info("--success [/keyword/mykeyword] api--");
+
+        } catch (Exception exception) {
+
+            responseEntity = ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Sorry, Board Error");
+
+            LOGGER.error("error : ", exception);
+        }
+        return responseEntity;
+    }
 }

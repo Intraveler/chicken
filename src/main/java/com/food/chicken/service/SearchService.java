@@ -8,9 +8,11 @@ import com.food.chicken.model.entity.Member;
 import com.food.chicken.model.entity.SearchHistory;
 import com.food.chicken.model.entity.SearchStatistics;
 import com.food.chicken.model.json.Location;
+import com.food.chicken.model.json.MySearchHistory;
 import com.food.chicken.repository.MemberRepository;
 import com.food.chicken.repository.SearchHistoryRepository;
 import com.food.chicken.repository.SearchStatisticsRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -148,5 +151,25 @@ public class SearchService {
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         headers.set(HttpHeaders.AUTHORIZATION, kakaoApiAuthPrefix + " " + kakaoApiAuthKey);
         return new HttpEntity<>(headers);
+    }
+
+    public String getKeywordHistoryByMember(String id) throws IOException {
+
+        ObjectMapper mapper = new ObjectMapper();
+        List<MySearchHistory> mySearchHistoryList = new ArrayList<>();
+        Member member = memberRepository.findById(id);
+
+        searchHistoryRepository
+                .findByMemberUidOrderByLastSearchDateDesc(member.getMemberUid())
+                .forEach(item -> {
+                    MySearchHistory mySearchHistory = new MySearchHistory();
+                    BeanUtils.copyProperties(item, mySearchHistory);
+                    mySearchHistoryList.add(mySearchHistory);
+                });
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        mapper.writeValue(out, mySearchHistoryList);
+
+        return new String(out.toByteArray());
     }
 }
