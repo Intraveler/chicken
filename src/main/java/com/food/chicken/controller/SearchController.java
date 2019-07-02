@@ -1,5 +1,8 @@
 package com.food.chicken.controller;
 
+import com.food.chicken.exceptions.ExternalException;
+import com.food.chicken.exceptions.InternalException;
+import com.food.chicken.exceptions.UnknownException;
 import com.food.chicken.service.SearchService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -11,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClientException;
 
+import java.io.IOException;
 import java.security.Principal;
 
 @RestController
@@ -44,13 +49,12 @@ public class SearchController {
 
             LOGGER.info("--success [/keyword/location] api--");
 
-        } catch (Exception exception) {
-
-            responseEntity = ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Sorry, Board Error");
-
-            LOGGER.error("error : ", exception);
+        } catch (RestClientException e) { // 외부 에러
+            throw new ExternalException(e.getMessage());
+        } catch (IOException e) { // 내부 알려진 에러
+            throw new InternalException(e.getMessage());
+        } catch (Exception e) { // 잘 모르겠는 에러
+            throw new UnknownException(e.getMessage());
         }
 
         return responseEntity;
@@ -63,27 +67,26 @@ public class SearchController {
         ResponseEntity responseEntity;
 
         try {
+
             responseEntity = ResponseEntity
                     .status(HttpStatus.OK)
                     .body(searchService.getKeywordHistoryByMember(memberId));
 
             LOGGER.info("--success [/keyword/mykeyword] api--");
 
-        } catch (Exception exception) {
-
-            responseEntity = ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Sorry, Board Error");
-
-            LOGGER.error("error : ", exception);
+        } catch (IOException e) { // 내부 알려진 에러
+            throw new InternalException(e.getMessage());
+        } catch (Exception e) { // 잘 모르겠는 에러
+            throw new UnknownException(e.getMessage());
         }
+
         return responseEntity;
     }
 
     @RequestMapping(value = "/keyword/populate", method = RequestMethod.GET)
     public ResponseEntity searchPopulateKeyword() {
-        ResponseEntity responseEntity;
 
+        ResponseEntity responseEntity = null;
         try {
 
             responseEntity = ResponseEntity
@@ -92,13 +95,10 @@ public class SearchController {
 
             LOGGER.info("--success [/keyword/mykeyword] api--");
 
-        } catch (Exception exception) {
-
-            responseEntity = ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Sorry, Board Error");
-
-            LOGGER.error("error : ", exception);
+        } catch (IOException e) { // 내부 알려진 에러
+            throw new InternalException(e.getMessage());
+        } catch (Exception e) { // 잘 모르겠는 에러
+            throw new UnknownException(e.getMessage());
         }
         return responseEntity;
     }

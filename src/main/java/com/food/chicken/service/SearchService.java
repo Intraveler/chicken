@@ -22,6 +22,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayOutputStream;
@@ -104,7 +105,7 @@ public class SearchService {
         }
     }
 
-    public String callApi(String keyword, String page) throws IOException {
+    public String callApi(String keyword, String page) throws RestClientException, IOException {
         String param = "query=" + keyword + "&" + "page=" + page;
         String result = restTemplate.exchange(requestUrl + param, HttpMethod.GET, getHeader(), String.class).getBody();
 
