@@ -41,7 +41,7 @@ class LocationSearch extends React.Component {
 
             this.setState({page_component: pageButton})
 
-        }, 200);
+        }, 500);
 
         event.preventDefault();
     }
@@ -50,12 +50,12 @@ class LocationSearch extends React.Component {
 
         return (
             <div>
-                -- 장소 검색 --
+                [ 장소 검색 ]
                 <form onSubmit={this.handleSubmit}>
                     <label>
-                        장소 : <input type="text" value={this.state.value} onChange={this.handleChange} />
+                        <input type="text" value={this.state.value} onChange={this.handleChange} />
                     </label>
-                    <input type="submit" value="Submit" />
+                    <input type="submit" value="검색하기" />
                 </form>
 
                 {this.state.data.map((item, num) => {
@@ -139,27 +139,21 @@ class KeywordHistory extends React.Component {
     constructor(props) {
         super(props);
         this.state = {value: '', data: []};
+        CallApiGet.getMyKeywordHistory(this);
     }
     handleChange = (event) => {
         this.setState({value: event.target.value});
     }
 
-    handleClear = (event) => {
-        this.setState({data: []});
+    handleRefresh = (event) => {
+        CallApiGet.getMyKeywordHistory(this);
     }
 
-    handleSubmit = (event) => {
-        CallApiGet.getMyKeywordHistory(this);
-        event.preventDefault();
-    }
     render() {
         return(
             <div>
                 [ 키워드 히스토리 ]
-                <form onSubmit={this.handleSubmit}>
-                    내 키워드 내역 확인 <input type="submit" value="확인하기" />
-                </form>
-                <button onClick={this.handleClear}> 접기 </button>
+                <span><button onClick={this.handleRefresh}> 새로고침 </button></span>
                 <KeywordHistoryResult data={this.state.data}/>
 
             </div>
@@ -189,17 +183,18 @@ class PopulateKeyword extends React.Component {
     constructor(props) {
         super(props);
         this.state = {value: '', data: []};
+        CallApiGet.getPopulateKeyword(this);
     }
     handleChange = (event) => {
         this.setState({value: event.target.value});
     }
 
-    handleClear = (event) => {
-        this.setState({data: []});
+    handleRefresh = (event) => {
+        CallApiGet.getPopulateKeyword(this);
     }
 
     handleSubmit = (event) => {
-        CallApiGet.getPopulateKeyword(this);
+
         event.preventDefault();
     }
 
@@ -207,9 +202,7 @@ class PopulateKeyword extends React.Component {
         return(
             <div>
                 [ 인기 검색어 TOP 10 ]
-                <form onSubmit={this.handleSubmit}>
-                <input type="submit" value="Submit" />
-                </form> <span><button onClick={this.handleClear}> 접기 </button></span>
+                <span><button onClick={this.handleRefresh}> 새로고침 </button></span>
                 <PopulateKeywordResult data={this.state.data}/>
             </div>
         );
