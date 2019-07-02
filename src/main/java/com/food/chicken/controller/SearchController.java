@@ -1,6 +1,8 @@
 package com.food.chicken.controller;
 
 import com.food.chicken.service.SearchService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -21,8 +23,14 @@ public class SearchController {
         this.searchService = searchService;
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "keyword", required = true, value = "조회할 키워드", paramType = "query", dataType = "string"),
+            @ApiImplicitParam(name = "page", required = true, value = "조회할 페이지 (1~45)", paramType = "query", dataType = "string")
+    })
     @RequestMapping(value = "/keyword/location", method = RequestMethod.GET)
-    public ResponseEntity searchLocation(Principal principal, @RequestParam("keyword") String keyword, @RequestParam("page") String page) {
+    public ResponseEntity searchLocation(Principal principal
+            , @RequestParam("keyword") String keyword
+            , @RequestParam("page") String page) {
         String memberId = principal.getName();
         ResponseEntity responseEntity;
 
