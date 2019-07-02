@@ -12,7 +12,6 @@ import com.food.chicken.model.json.MySearchHistory;
 import com.food.chicken.repository.MemberRepository;
 import com.food.chicken.repository.SearchHistoryRepository;
 import com.food.chicken.repository.SearchStatisticsRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +26,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -159,12 +159,14 @@ public class SearchService {
         ObjectMapper mapper = new ObjectMapper();
         List<MySearchHistory> mySearchHistoryList = new ArrayList<>();
         Member member = memberRepository.findById(id);
+        SimpleDateFormat format = new SimpleDateFormat("yy.MM.dd.");
 
         searchHistoryRepository
                 .findByMemberUidOrderByLastSearchDateDesc(member.getMemberUid())
                 .forEach(item -> {
                     MySearchHistory mySearchHistory = new MySearchHistory();
-                    BeanUtils.copyProperties(item, mySearchHistory);
+                    mySearchHistory.setKeyword(item.getKeyword());
+                    mySearchHistory.setLastSearchDate(format.format(item.getLastSearchDate()));
                     mySearchHistoryList.add(mySearchHistory);
                 });
 

@@ -1,10 +1,8 @@
 package com.food.chicken.model.json;
 
-import java.util.Date;
-
 public class MySearchHistory {
     private String keyword;
-    private Date lastSearchDate;
+    private String lastSearchDate;
 
     public String getKeyword() {
         return keyword;
@@ -14,11 +12,11 @@ public class MySearchHistory {
         this.keyword = keyword;
     }
 
-    public Date getLastSearchDate() {
+    public String getLastSearchDate() {
         return lastSearchDate;
     }
 
-    public void setLastSearchDate(Date lastSearchDate) {
+    public void setLastSearchDate(String lastSearchDate) {
         this.lastSearchDate = lastSearchDate;
     }
 
