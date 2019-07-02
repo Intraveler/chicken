@@ -1,6 +1,6 @@
 package com.food.chicken;
 
-import com.food.chicken.model.Member;
+import com.food.chicken.model.entity.Member;
 import com.food.chicken.repository.MemberRepository;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;

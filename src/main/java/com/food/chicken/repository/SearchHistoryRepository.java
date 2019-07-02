@@ -1,7 +1,7 @@
 package com.food.chicken.repository;
 
-import com.food.chicken.model.SearchHistory;
-import com.food.chicken.model.SearchHistoryPK;
+import com.food.chicken.model.entity.SearchHistory;
+import com.food.chicken.model.entity.SearchHistoryPK;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

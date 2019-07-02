@@ -1,6 +1,6 @@
 package com.food.chicken.service;
 
-import com.food.chicken.model.Member;
+import com.food.chicken.model.entity.Member;
 import com.food.chicken.repository.MemberRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

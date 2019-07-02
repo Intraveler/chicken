@@ -1,4 +1,4 @@
-package com.food.chicken.model;
+package com.food.chicken.model.entity;
 
 import javax.persistence.*;
 import java.util.Objects;
