@@ -36,9 +36,9 @@ public class SearchController {
     public ResponseEntity searchLocation(Principal principal
             , @RequestParam("keyword") String keyword
             , @RequestParam("page") String page) {
+
         String memberId = principal.getName();
         ResponseEntity responseEntity;
-
         try {
             searchService.saveHistory(memberId, keyword);
             searchService.saveStatistics(keyword);
@@ -68,7 +68,6 @@ public class SearchController {
         String memberId = principal.getName();
 
         ResponseEntity responseEntity;
-
         try {
 
             responseEntity = ResponseEntity
@@ -91,7 +90,7 @@ public class SearchController {
     @RequestMapping(value = "/keyword/populate", method = RequestMethod.GET)
     public ResponseEntity searchPopulateKeyword() {
 
-        ResponseEntity responseEntity = null;
+        ResponseEntity responseEntity;
         try {
 
             responseEntity = ResponseEntity
