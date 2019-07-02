@@ -7,41 +7,81 @@ import '../../node_modules/react-bootstrap-table/css/react-bootstrap-table.css'
 class LocationSearch extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {value: '', data: [], total_count: '', page_count: '', page_component: [], is_end: false};
+        this.state = {value: '', data: [], total_count: '', page_component: [], is_end: false, initCount:0, searchButton: false, pageButton: false, click_page: 0, end_click_page:0, endCount:0};
     }
+
     handleChange = (event) => {
         this.setState({value: event.target.value});
     }
 
     callThisPage = (item) => (event) => {
+        if(item === this.state.click_page){
+            return;
+        }
+
+        this.setState({click_page:item});
+
         CallApiGet.getLocationList(this, this.state.value, item);
+
+        if(this.state.end_click_page >= item ){
+
+        } else {
+
+            if(!this.state.is_end){
+                if(item < this.state.end_click_page){
+                    if(item < this.state.endCount){
+                        var array = this.state.page_component;
+                        array.push(<button key={item+1} onClick={this.callThisPage(item+1)}> {item+1} </button>);
+                        this.setState({page_component: array});
+                    }
+                } else {
+                    var array = this.state.page_component;
+                    array.push(<button key={item+1} onClick={this.callThisPage(item+1)}> {item+1} </button>);
+                    this.setState({page_component: array});
+                    this.setState({end_click_page: item});
+                }
+            } else {
+              this.setState({endCount: item-1});
+            }
+
+            if(this.state.is_end){
+                var array = this.state.page_component;
+                array.pop();
+                this.setState({page_component: array});
+            }
+        }
+
+        this.setState({searchButton: false, pageButton: true});
+
     }
 
     handleSubmit = (event) => {
+        this.setState({click_page:1});
+        this.setState({endCount: 0});
+
         CallApiGet.getLocationList(this, this.state.value, 1);
 
+        this.setState({searchButton: true, pageButton: false});
+
+        if(!this.state.searchButton){
+            this.setState({initCount: 1, searchButton: true, page_component: []});
+
+        } else {
+            if(!this.state.pageButton){
+                this.setState({initCount: 1, searchButton: true, page_component: []});
+            }
+        }
+
         setTimeout(() => {
-            let pageCount;
-            if(this.state.total_count > 10){
-                pageCount = Math.ceil(this.state.total_count / 15);
-            } else {
-                pageCount = 1;
+
+            var array = this.state.page_component;
+            for (let i = 0; i <= this.state.initCount; i++) {
+                array.push(<button key={i+1} onClick={this.callThisPage(i+1)}> {i+1} </button>);
             }
+            this.setState({page_component: array});
+            this.setState({end_click_page: 1});
 
-            if(pageCount > 45){
-                pageCount = 45;
-            }
-
-            this.setState({page_count: pageCount});
-
-            let pageButton = [];
-            for (let i = 1; i <= pageCount; i++) {
-                pageButton.push(<button onClick={this.callThisPage(i)}> {i} </button>);
-            }
-
-            this.setState({page_component: pageButton})
-
-        }, 500);
+            }, 1);
 
         event.preventDefault();
     }
@@ -70,12 +110,27 @@ class LocationSearch extends React.Component {
                         key={num}/>);
                 })}
 
+                {
+                    this.state.page_component.map((item, num) => {
+                        return (<Test data={item}
+                                        key={num}></Test>
+                        );
 
-                {this.state.page_component}
+                })}
+
 
                 {<div><KeywordHistory></KeywordHistory></div>}
                 {<div><PopulateKeyword></PopulateKeyword></div>}
             </div>
+        );
+    }
+}
+
+class Test extends React.Component{
+    render() {
+
+        return(
+                <button> {this.props.data} </button>
         );
     }
 }
