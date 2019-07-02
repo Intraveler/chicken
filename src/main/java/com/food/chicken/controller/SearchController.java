@@ -49,13 +49,13 @@ public class SearchController {
 
             log.debug("[SUCCESS] REST API [/keyword/location] || memberID={} || keyword={}", memberId, keyword);
 
-        } catch (RestClientException e) { // 외부 에러
+        } catch (RestClientException e) { // 외부 예외
             log.error("[FAIL] REST API [/keyword/location] || memberID={} || keyword={}", memberId, keyword, e);
             throw new ExternalException(e.getMessage());
-        } catch (IOException e) { // 내부 알려진 에러
+        } catch (IOException e) { // 내부에서 알려진 예외
             log.error("[FAIL] REST API [/keyword/location] || memberID={} || keyword={}", memberId, keyword, e);
             throw new InternalException(e.getMessage());
-        } catch (Exception e) { // 잘 모르겠는 에러
+        } catch (Exception e) { // 알려지지 않은 예외
             log.error("[FAIL] REST API [/keyword/location] || memberID={} || keyword={}", memberId, keyword, e);
             throw new UnknownException(e.getMessage());
         }
@@ -76,10 +76,10 @@ public class SearchController {
 
             log.debug("[SUCCESS] REST API [/keyword/mykeyword] || memberID={}", memberId);
 
-        } catch (IOException e) { // 내부 알려진 에러
+        } catch (IOException e) { // 내부에서 알려진 예외
             log.error("[FAIL] REST API [/keyword/mykeyword] || memberID={}", memberId, e);
             throw new InternalException(e.getMessage());
-        } catch (Exception e) { // 잘 모르겠는 에러
+        } catch (Exception e) { // 알려지지 않은 예외
             log.error("[FAIL] REST API [/keyword/mykeyword] || memberID={}", memberId, e);
             throw new UnknownException(e.getMessage());
         }
@@ -97,10 +97,10 @@ public class SearchController {
                     .status(HttpStatus.OK)
                     .body(searchService.getPopulateKeyword());
 
-        } catch (IOException e) { // 내부 알려진 에러
+        } catch (IOException e) { // 내부에서 알려진 예외
             log.error("[FAIL] REST API [/keyword/populate]", e);
             throw new InternalException(e.getMessage());
-        } catch (Exception e) { // 잘 모르겠는 에러
+        } catch (Exception e) { // 알려지지 않은 예외
             log.error("[FAIL] REST API [/keyword/populate]", e);
             throw new UnknownException(e.getMessage());
         }
