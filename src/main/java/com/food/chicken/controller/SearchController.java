@@ -29,13 +29,13 @@ public class SearchController {
     }
 
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "keyword", required = true, value = "조회할 키워드", paramType = "query", dataType = "string"),
-            @ApiImplicitParam(name = "page", required = true, value = "조회할 페이지 (1~45)", paramType = "query", dataType = "string")
+            @ApiImplicitParam(name = "keyword", required = true, value = "조회할 키워드", paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "page", required = true, value = "조회할 페이지 (1~45)", paramType = "query", dataType = "int")
     })
     @RequestMapping(value = "/keyword/location", method = RequestMethod.GET)
     public ResponseEntity searchLocation(Principal principal
             , @RequestParam("keyword") String keyword
-            , @RequestParam("page") String page) {
+            , @RequestParam("page") Integer page) {
 
         String memberId = principal.getName();
         ResponseEntity responseEntity;
@@ -45,9 +45,9 @@ public class SearchController {
 
             responseEntity = ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(searchService.callApi(keyword, page));
+                    .body(searchService.callApi(keyword, String.valueOf(page)));
 
-            log.debug("[SUCCESS] REST API [/keyword/location] || memberID={} || keyword={}", memberId, keyword);
+            log.info("[SUCCESS] REST API [/keyword/location] || memberID={} || keyword={}", memberId, keyword);
 
         } catch (RestClientException e) { // 외부 예외
             log.error("[FAIL] REST API [/keyword/location] || memberID={} || keyword={}", memberId, keyword, e);
@@ -74,7 +74,7 @@ public class SearchController {
                     .status(HttpStatus.OK)
                     .body(searchService.getKeywordHistoryByMember(memberId));
 
-            log.debug("[SUCCESS] REST API [/keyword/mykeyword] || memberID={}", memberId);
+            log.info("[SUCCESS] REST API [/keyword/mykeyword] || memberID={}", memberId);
 
         } catch (IOException e) { // 내부에서 알려진 예외
             log.error("[FAIL] REST API [/keyword/mykeyword] || memberID={}", memberId, e);
