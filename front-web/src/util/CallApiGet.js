@@ -54,7 +54,7 @@ export function callLogout() {
         })
 
         .catch(function (error) {
-            alert("[E04] 통신에 문제가 발생했습니다.");
+            alert("[E04] 로그아웃 도중 문제가 발생했습니다.");
             return "error";
         });
 }
