@@ -56,32 +56,34 @@ class LocationSearch extends React.Component {
     }
 
     handleSubmit = (event) => {
-        this.setState({click_page:1});
-        this.setState({endCount: 0});
+        if(this.state.value !== ''){
+            this.setState({click_page:1});
+            this.setState({endCount: 0});
 
-        CallApiGet.getLocationList(this, this.state.value, 1);
+            CallApiGet.getLocationList(this, this.state.value, 1);
 
-        this.setState({searchButton: true, pageButton: false});
+            this.setState({searchButton: true, pageButton: false});
 
-        if(!this.state.searchButton){
-            this.setState({initCount: 1, searchButton: true, page_component: []});
-
-        } else {
-            if(!this.state.pageButton){
+            if(!this.state.searchButton){
                 this.setState({initCount: 1, searchButton: true, page_component: []});
-            }
-        }
 
-        setTimeout(() => {
-
-            var array = this.state.page_component;
-            for (let i = 0; i <= this.state.initCount; i++) {
-                array.push(<button key={i+1} onClick={this.callThisPage(i+1)}> {i+1} </button>);
+            } else {
+                if(!this.state.pageButton){
+                    this.setState({initCount: 1, searchButton: true, page_component: []});
+                }
             }
-            this.setState({page_component: array});
-            this.setState({end_click_page: 1});
+
+            setTimeout(() => {
+
+                var array = this.state.page_component;
+                for (let i = 0; i <= this.state.initCount; i++) {
+                    array.push(<button key={i+1} onClick={this.callThisPage(i+1)}> {i+1} </button>);
+                }
+                this.setState({page_component: array});
+                this.setState({end_click_page: 1});
 
             }, 1);
+        }
 
         event.preventDefault();
     }
@@ -182,7 +184,6 @@ class Popup extends React.Component {
                     <h3>지번주소 : {this.props.addressName}</h3>
                     <h3>도로명주소 : {this.props.roadAddressName}</h3>
                     <h2>지도보기 : <a href={`https://map.kakao.com/link/to/${this.props.id}`} target="_blank">바로가기(클릭)</a></h2>
-                    <button onClick={this.props.closePopup}>클릭 시 축소</button>
                 </div>
             </div>
         );
@@ -196,6 +197,7 @@ class KeywordHistory extends React.Component {
         this.state = {value: '', data: []};
         CallApiGet.getMyKeywordHistory(this);
     }
+
     handleChange = (event) => {
         this.setState({value: event.target.value});
     }
@@ -210,7 +212,6 @@ class KeywordHistory extends React.Component {
                 [ 키워드 히스토리 ]
                 <span><button onClick={this.handleRefresh}> 새로고침 </button></span>
                 <KeywordHistoryResult data={this.state.data}/>
-
             </div>
         );
     }
@@ -221,11 +222,19 @@ class KeywordHistoryResult extends React.Component {
         return (
             <div>
                 <BootstrapTable data={this.props.data}>
-                    <TableHeaderColumn isKey dataField='keyword'>
-                        검색키워드
+                    <TableHeaderColumn isKey dataField='keyword'
+                                       dataAlign='center'
+                                       headerAlign="center"
+                                       width="7%"
+                                       tdStyle={
+                                           {backgroundColor: '#f2f2f2'}}>검색키워드
                     </TableHeaderColumn>
-                    <TableHeaderColumn dataField='lastSearchDate'>
-                        최근조회일
+                    <TableHeaderColumn dataField='lastSearchDate'
+                                       dataAlign='left'
+                                       headerAlign="center"
+                                       width="1%"
+                                       tdStyle={
+                                           {backgroundColor: '#e6f2ff'}}>최근조회일
                     </TableHeaderColumn>
                 </BootstrapTable>
             </div>
@@ -269,14 +278,49 @@ class PopulateKeywordResult extends React.Component {
         return (
         <div>
             <BootstrapTable data={this.props.data}>
-                <TableHeaderColumn isKey dataField='keyword'>
-                    인기키워드
+                <TableHeaderColumn isKey dataField='keyword'
+                                   dataAlign='center'
+                                   headerAlign="center"
+                                   width="7%"
+                                   tdStyle={
+                                       {backgroundColor: '#f2f2f2'}}>인기키워드
                 </TableHeaderColumn>
-                <TableHeaderColumn dataField='count'>
-                    조회수
+                <TableHeaderColumn dataField='count'
+                                   dataAlign='left'
+                                   headerAlign="center"
+                                   width="1%"
+                                   tdStyle={
+                                       {backgroundColor: '#e6f2ff'}}>조회수
                 </TableHeaderColumn>
             </BootstrapTable>
+
+            {<div><Logout></Logout></div>}
         </div>
+        );
+    }
+}
+
+class Logout extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {value: '', data: []};
+    }
+    handleLogout = (event) => {
+        CallApiGet.callLogout()
+            .then(data => {
+
+            if(data === "success"){
+                window.location.replace("/");
+            } else {
+                alert("로그아웃 중 문제가 발생했습니다.");
+            }
+        });
+    }
+    render() {
+        return (
+            <div>
+                <button onClick={this.handleLogout}> 로그아웃 </button>
+            </div>
         );
     }
 }
