@@ -21,9 +21,7 @@ public class ChickenApplication {
 
     @Bean
     InitializingBean initData() {
-        return () -> {
-            this.initMember();
-        };
+        return this::initMember;
     }
 
     private void initMember(){
