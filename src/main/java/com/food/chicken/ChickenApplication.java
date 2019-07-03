@@ -2,7 +2,6 @@ package com.food.chicken;
 
 import com.food.chicken.model.entity.Member;
 import com.food.chicken.repository.MemberRepository;
-import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -11,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
-@EnableEncryptableProperties
 public class ChickenApplication {
 
     @Autowired
