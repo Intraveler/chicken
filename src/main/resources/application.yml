@@ -9,8 +9,8 @@ spring:
   datasource:
     hikari:
       jdbc-url: jdbc:h2:mem:memory_db     # Memory DB
-      username: chicken
-      password: leg
+      username: ENC(gOoRKyXLG2p1whDGqXconA==)
+      password: ENC(Ntv0UTntErHKYPzPrvJPWA==)
 
   h2:
     console:
@@ -25,7 +25,7 @@ kakao:
   auth:
     prefix: KakaoAK
     key:
-      rest-api: 4c643de95be12dc48aff7938967cc7e5
+      rest-api: ENC(lYhPqvyB2NKcLcMyAD7jEp4+U0FBg8wst2ikFRiM49NKUXRLbh0trFO48o+mXAJM)
   api:
     address:
       location: "https://dapi.kakao.com/v2/local/search/keyword.json?"
