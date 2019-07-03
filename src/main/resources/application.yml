@@ -8,8 +8,7 @@ spring:
   profiles: local
   datasource:
     hikari:
-#      jdbc-url: jdbc:h2:mem:memory_db     # Memory DB
-      jdbc-url: jdbc:h2:./data/local_db   # Local DB : 웹 콘솔 이외의 툴에서 사용하기 위해 임시로 셋팅 (config/ConfigH2Server 파일과 의존), 추 후 삭제 TODO: 최종 단계에서 삭제 필요
+      jdbc-url: jdbc:h2:mem:memory_db     # Memory DB
       username: chicken
       password: leg
 
@@ -20,7 +19,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
 
 kakao:
   auth:

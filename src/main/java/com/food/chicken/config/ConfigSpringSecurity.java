@@ -18,7 +18,8 @@ public class ConfigSpringSecurity extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) {
 
         web.ignoring().antMatchers(
-                "/css/**"
+                "/h2/**"
+                ,"/css/**"
                 , "/script/**"
                 , "image/**"
                 , "/fonts/**"
@@ -30,6 +31,7 @@ public class ConfigSpringSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http.authorizeRequests()
+                .antMatchers("/h2/**").permitAll()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/**").authenticated();
 
