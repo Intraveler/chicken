@@ -1,0 +1,31 @@
+spring:
+  profiles:
+    active: local
+
+---
+
+spring:
+  profiles: local
+  datasource:
+    hikari:
+      jdbc-url: jdbc:h2:mem:memory_db     # Memory DB
+      username: chicken
+      password: leg
+
+  h2:
+    console:
+      enabled: true
+      path: /h2
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+kakao:
+  auth:
+    prefix: KakaoAK
+    key:
+      rest-api: 4c643de95be12dc48aff7938967cc7e5
+  api:
+    address:
+      location: "https://dapi.kakao.com/v2/local/search/keyword.json?"
