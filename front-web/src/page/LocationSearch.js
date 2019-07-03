@@ -7,41 +7,83 @@ import '../../node_modules/react-bootstrap-table/css/react-bootstrap-table.css'
 class LocationSearch extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {value: '', data: [], total_count: '', page_count: '', page_component: [], is_end: false};
+        this.state = {value: '', data: [], total_count: '', page_component: [], is_end: false, initCount:0, searchButton: false, pageButton: false, click_page: 0, end_click_page:0, endCount:0};
     }
+
     handleChange = (event) => {
         this.setState({value: event.target.value});
     }
 
     callThisPage = (item) => (event) => {
+        if(item === this.state.click_page){
+            return;
+        }
+
+        this.setState({click_page:item});
+
         CallApiGet.getLocationList(this, this.state.value, item);
+
+        if(this.state.end_click_page >= item ){
+
+        } else {
+
+            if(!this.state.is_end){
+                if(item < this.state.end_click_page){
+                    if(item < this.state.endCount){
+                        var array = this.state.page_component;
+                        array.push(<button key={item+1} onClick={this.callThisPage(item+1)}> {item+1} </button>);
+                        this.setState({page_component: array});
+                    }
+                } else {
+                    var array = this.state.page_component;
+                    array.push(<button key={item+1} onClick={this.callThisPage(item+1)}> {item+1} </button>);
+                    this.setState({page_component: array});
+                    this.setState({end_click_page: item});
+                }
+            } else {
+              this.setState({endCount: item-1});
+            }
+
+            if(this.state.is_end){
+                var array = this.state.page_component;
+                array.pop();
+                this.setState({page_component: array});
+            }
+        }
+
+        this.setState({searchButton: false, pageButton: true});
+
     }
 
     handleSubmit = (event) => {
-        CallApiGet.getLocationList(this, this.state.value, 1);
+        if(this.state.value !== ''){
+            this.setState({click_page:1});
+            this.setState({endCount: 0});
 
-        setTimeout(() => {
-            let pageCount;
-            if(this.state.total_count > 10){
-                pageCount = Math.ceil(this.state.total_count / 15);
+            CallApiGet.getLocationList(this, this.state.value, 1);
+
+            this.setState({searchButton: true, pageButton: false});
+
+            if(!this.state.searchButton){
+                this.setState({initCount: 1, searchButton: true, page_component: []});
+
             } else {
-                pageCount = 1;
+                if(!this.state.pageButton){
+                    this.setState({initCount: 1, searchButton: true, page_component: []});
+                }
             }
 
-            if(pageCount > 45){
-                pageCount = 45;
-            }
+            setTimeout(() => {
 
-            this.setState({page_count: pageCount});
+                var array = this.state.page_component;
+                for (let i = 0; i <= this.state.initCount; i++) {
+                    array.push(<button key={i+1} onClick={this.callThisPage(i+1)}> {i+1} </button>);
+                }
+                this.setState({page_component: array});
+                this.setState({end_click_page: 1});
 
-            let pageButton = [];
-            for (let i = 1; i <= pageCount; i++) {
-                pageButton.push(<button onClick={this.callThisPage(i)}> {i} </button>);
-            }
-
-            this.setState({page_component: pageButton})
-
-        }, 200);
+            }, 1);
+        }
 
         event.preventDefault();
     }
@@ -50,12 +92,12 @@ class LocationSearch extends React.Component {
 
         return (
             <div>
-                -- 장소 검색 --
+                [ 장소 검색 ]
                 <form onSubmit={this.handleSubmit}>
                     <label>
-                        장소 : <input type="text" value={this.state.value} onChange={this.handleChange} />
+                        <input type="text" value={this.state.value} onChange={this.handleChange} />
                     </label>
-                    <input type="submit" value="Submit" />
+                    <input type="submit" value="검색하기" />
                 </form>
 
                 {this.state.data.map((item, num) => {
@@ -70,12 +112,27 @@ class LocationSearch extends React.Component {
                         key={num}/>);
                 })}
 
+                {
+                    this.state.page_component.map((item, num) => {
+                        return (<Test data={item}
+                                        key={num}></Test>
+                        );
 
-                {this.state.page_component}
+                })}
+
 
                 {<div><KeywordHistory></KeywordHistory></div>}
                 {<div><PopulateKeyword></PopulateKeyword></div>}
             </div>
+        );
+    }
+}
+
+class Test extends React.Component{
+    render() {
+
+        return(
+                <button> {this.props.data} </button>
         );
     }
 }
@@ -127,7 +184,6 @@ class Popup extends React.Component {
                     <h3>지번주소 : {this.props.addressName}</h3>
                     <h3>도로명주소 : {this.props.roadAddressName}</h3>
                     <h2>지도보기 : <a href={`https://map.kakao.com/link/to/${this.props.id}`} target="_blank">바로가기(클릭)</a></h2>
-                    <button onClick={this.props.closePopup}>클릭 시 축소</button>
                 </div>
             </div>
         );
@@ -139,29 +195,23 @@ class KeywordHistory extends React.Component {
     constructor(props) {
         super(props);
         this.state = {value: '', data: []};
+        CallApiGet.getMyKeywordHistory(this);
     }
+
     handleChange = (event) => {
         this.setState({value: event.target.value});
     }
 
-    handleClear = (event) => {
-        this.setState({data: []});
+    handleRefresh = (event) => {
+        CallApiGet.getMyKeywordHistory(this);
     }
 
-    handleSubmit = (event) => {
-        CallApiGet.getMyKeywordHistory(this);
-        event.preventDefault();
-    }
     render() {
         return(
             <div>
                 [ 키워드 히스토리 ]
-                <form onSubmit={this.handleSubmit}>
-                    내 키워드 내역 확인 <input type="submit" value="확인하기" />
-                </form>
-                <button onClick={this.handleClear}> 접기 </button>
+                <span><button onClick={this.handleRefresh}> 새로고침 </button></span>
                 <KeywordHistoryResult data={this.state.data}/>
-
             </div>
         );
     }
@@ -172,11 +222,19 @@ class KeywordHistoryResult extends React.Component {
         return (
             <div>
                 <BootstrapTable data={this.props.data}>
-                    <TableHeaderColumn isKey dataField='keyword'>
-                        검색키워드
+                    <TableHeaderColumn isKey dataField='keyword'
+                                       dataAlign='center'
+                                       headerAlign="center"
+                                       width="7%"
+                                       tdStyle={
+                                           {backgroundColor: '#f2f2f2'}}>검색키워드
                     </TableHeaderColumn>
-                    <TableHeaderColumn dataField='lastSearchDate'>
-                        최근조회일
+                    <TableHeaderColumn dataField='lastSearchDate'
+                                       dataAlign='left'
+                                       headerAlign="center"
+                                       width="1%"
+                                       tdStyle={
+                                           {backgroundColor: '#e6f2ff'}}>최근조회일
                     </TableHeaderColumn>
                 </BootstrapTable>
             </div>
@@ -189,17 +247,18 @@ class PopulateKeyword extends React.Component {
     constructor(props) {
         super(props);
         this.state = {value: '', data: []};
+        CallApiGet.getPopulateKeyword(this);
     }
     handleChange = (event) => {
         this.setState({value: event.target.value});
     }
 
-    handleClear = (event) => {
-        this.setState({data: []});
+    handleRefresh = (event) => {
+        CallApiGet.getPopulateKeyword(this);
     }
 
     handleSubmit = (event) => {
-        CallApiGet.getPopulateKeyword(this);
+
         event.preventDefault();
     }
 
@@ -207,9 +266,7 @@ class PopulateKeyword extends React.Component {
         return(
             <div>
                 [ 인기 검색어 TOP 10 ]
-                <form onSubmit={this.handleSubmit}>
-                <input type="submit" value="Submit" />
-                </form> <span><button onClick={this.handleClear}> 접기 </button></span>
+                <span><button onClick={this.handleRefresh}> 새로고침 </button></span>
                 <PopulateKeywordResult data={this.state.data}/>
             </div>
         );
@@ -221,14 +278,49 @@ class PopulateKeywordResult extends React.Component {
         return (
         <div>
             <BootstrapTable data={this.props.data}>
-                <TableHeaderColumn isKey dataField='keyword'>
-                    인기키워드
+                <TableHeaderColumn isKey dataField='keyword'
+                                   dataAlign='center'
+                                   headerAlign="center"
+                                   width="7%"
+                                   tdStyle={
+                                       {backgroundColor: '#f2f2f2'}}>인기키워드
                 </TableHeaderColumn>
-                <TableHeaderColumn dataField='count'>
-                    조회수
+                <TableHeaderColumn dataField='count'
+                                   dataAlign='left'
+                                   headerAlign="center"
+                                   width="1%"
+                                   tdStyle={
+                                       {backgroundColor: '#e6f2ff'}}>조회수
                 </TableHeaderColumn>
             </BootstrapTable>
+
+            {<div><Logout></Logout></div>}
         </div>
+        );
+    }
+}
+
+class Logout extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {value: '', data: []};
+    }
+    handleLogout = (event) => {
+        CallApiGet.callLogout()
+            .then(data => {
+
+            if(data === "success"){
+                window.location.replace("/");
+            } else {
+                alert("로그아웃 중 문제가 발생했습니다.");
+            }
+        });
+    }
+    render() {
+        return (
+            <div>
+                <button onClick={this.handleLogout}> 로그아웃 </button>
+            </div>
         );
     }
 }
