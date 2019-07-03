@@ -1,6 +1,6 @@
 package com.food.chicken.exceptions.advice;
 
-import com.food.chicken.exceptions.ExceptionType;
+import com.food.chicken.common.ExceptionType;
 import com.food.chicken.exceptions.ExternalException;
 import com.food.chicken.exceptions.InternalException;
 import com.food.chicken.exceptions.UnknownException;

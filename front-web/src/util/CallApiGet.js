@@ -16,31 +16,31 @@ export function getLocationList(object, keyword, page) {
             });
             return "success";
         })
-        .catch(function (error) {
+        .catch(function () {
             alert("[E01] 통신에 문제가 발생했습니다.");
             return "error";
         });
 }
 
 export function getMyKeywordHistory(object) {
-    return axios.get('/keyword/mykeyword')
+    return axios.get('/keyword/me')
         .then(function (response) {
             object.setState({data: response.data});
             return "success";
         })
-        .catch(function (error) {
+        .catch(function () {
             alert("[E02] 통신에 문제가 발생했습니다.");
             return "error";
         });
 }
 
 export function getPopulateKeyword(object) {
-    return axios.get('/keyword/populate')
+    return axios.get('/keyword/popularity')
         .then(function (response) {
             object.setState({data: response.data.content});
             return "success";
         })
-        .catch(function (error) {
+        .catch(function () {
             alert("[E03] 통신에 문제가 발생했습니다.");
             return "error";
         });
@@ -48,8 +48,7 @@ export function getPopulateKeyword(object) {
 
 export function callLogout() {
     return axios.get('/member/logout')
-        .then(function (response) {
-            console.log("then");
+        .then(function () {
             return "success";
         })
 

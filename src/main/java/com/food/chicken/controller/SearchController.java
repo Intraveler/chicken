@@ -18,6 +18,7 @@ import org.springframework.web.client.RestClientException;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.NoSuchElementException;
 
 @RestController
 public class SearchController {
@@ -45,14 +46,14 @@ public class SearchController {
 
             responseEntity = ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(searchService.callApi(keyword, String.valueOf(page)));
+                    .body(searchService.getLocationData(keyword, String.valueOf(page)));
 
             log.info("[SUCCESS] REST API [/keyword/location] || memberID={} || keyword={}", memberId, keyword);
 
         } catch (RestClientException e) { // 외부 예외
             log.error("[FAIL] REST API [/keyword/location] || memberID={} || keyword={}", memberId, keyword, e);
             throw new ExternalException(e.getMessage());
-        } catch (IOException e) { // 내부에서 알려진 예외
+        } catch (IOException | NoSuchElementException e) { // 내부에서 알려진 예외
             log.error("[FAIL] REST API [/keyword/location] || memberID={} || keyword={}", memberId, keyword, e);
             throw new InternalException(e.getMessage());
         } catch (Exception e) { // 알려지지 않은 예외
@@ -63,7 +64,7 @@ public class SearchController {
         return responseEntity;
     }
 
-    @RequestMapping(value = "/keyword/mykeyword", method = RequestMethod.GET)
+    @RequestMapping(value = "/keyword/me", method = RequestMethod.GET)
     public ResponseEntity searchKeywordHistory(Principal principal) {
         String memberId = principal.getName();
 
@@ -74,34 +75,34 @@ public class SearchController {
                     .status(HttpStatus.OK)
                     .body(searchService.getKeywordHistoryByMember(memberId));
 
-            log.info("[SUCCESS] REST API [/keyword/mykeyword] || memberID={}", memberId);
+            log.info("[SUCCESS] REST API [/keyword/me] || memberID={}", memberId);
 
         } catch (IOException e) { // 내부에서 알려진 예외
-            log.error("[FAIL] REST API [/keyword/mykeyword] || memberID={}", memberId, e);
+            log.error("[FAIL] REST API [/keyword/me] || memberID={}", memberId, e);
             throw new InternalException(e.getMessage());
         } catch (Exception e) { // 알려지지 않은 예외
-            log.error("[FAIL] REST API [/keyword/mykeyword] || memberID={}", memberId, e);
+            log.error("[FAIL] REST API [/keyword/me] || memberID={}", memberId, e);
             throw new UnknownException(e.getMessage());
         }
 
         return responseEntity;
     }
 
-    @RequestMapping(value = "/keyword/populate", method = RequestMethod.GET)
-    public ResponseEntity searchPopulateKeyword() {
+    @RequestMapping(value = "/keyword/popularity", method = RequestMethod.GET)
+    public ResponseEntity searchPopularityKeyword() {
 
         ResponseEntity responseEntity;
         try {
 
             responseEntity = ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(searchService.getPopulateKeyword());
+                    .body(searchService.getPopularityKeyword());
 
         } catch (IOException e) { // 내부에서 알려진 예외
-            log.error("[FAIL] REST API [/keyword/populate]", e);
+            log.error("[FAIL] REST API [/keyword/popularity]", e);
             throw new InternalException(e.getMessage());
         } catch (Exception e) { // 알려지지 않은 예외
-            log.error("[FAIL] REST API [/keyword/populate]", e);
+            log.error("[FAIL] REST API [/keyword/popularity]", e);
             throw new UnknownException(e.getMessage());
         }
         return responseEntity;
