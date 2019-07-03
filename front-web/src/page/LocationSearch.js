@@ -330,8 +330,6 @@ class Logout extends React.Component {
             .then(data => {
                 if (data === "success") {
                     window.location.replace("/");
-                } else {
-                    alert("로그아웃 중 문제가 발생했습니다.");
                 }
             });
     }
