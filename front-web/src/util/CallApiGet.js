@@ -47,7 +47,7 @@ export function getPopulateKeyword(object) {
 
 export function callLogout() {
 
-    return axios.get('/eee')
+    return axios.get('/member/logout')
         .then(function (response) {
             console.log("then");
             return "success";
