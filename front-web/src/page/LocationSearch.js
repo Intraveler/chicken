@@ -12,15 +12,14 @@ class LocationSearch extends React.Component {
         this.state = {
             value: '',
             data: [],
-            total_count: '',
             page_component: [],
             is_end: false,
-            initCount: 0,
-            searchButton: false,
-            pageButton: false,
+            init_count: 0,
+            search_button: false,
+            page_button: false,
             click_page: 0,
             end_click_page: 0,
-            endCount: 0
+            end_count: 0
         };
     }
 
@@ -41,7 +40,7 @@ class LocationSearch extends React.Component {
                     if (this.state.end_click_page < item) {
                         if (!this.state.is_end) {
                             if (item < this.state.end_click_page) {
-                                if (item < this.state.endCount) {
+                                if (item < this.state.end_count) {
                                     var array = this.state.page_component;
                                     array.push(<button key={item + 1}
                                                        onClick={this.callThisPage(item + 1)}> {item + 1} </button>);
@@ -55,13 +54,11 @@ class LocationSearch extends React.Component {
                                 this.setState({end_click_page: item});
                             }
                         } else {
-                            this.setState({endCount: item});
+                            this.setState({end_count: item});
                         }
                     }
 
-                    this.setState({searchButton: false, pageButton: true});
-                } else {
-
+                    this.setState({search_button: false, page_button: true});
                 }
             });
     }
@@ -69,26 +66,26 @@ class LocationSearch extends React.Component {
     handleSubmit = (event) => {
         if (this.state.value !== '') {
             this.setState({click_page: 1});
-            this.setState({endCount: 0});
+            this.setState({end_count: 0});
 
             CallApiGet.getLocationList(this, this.state.value, 1)
                 .then(data => {
                     if (data === "success") {
-                        this.setState({searchButton: true, pageButton: false});
+                        this.setState({search_button: true, page_button: false});
 
-                        if (!this.state.searchButton) {
-                            this.setState({initCount: 1, searchButton: true, page_component: []});
+                        if (!this.state.search_button) {
+                            this.setState({init_count: 1, search_button: true, page_component: []});
 
                         } else {
-                            if (!this.state.pageButton) {
-                                this.setState({initCount: 1, searchButton: true, page_component: []});
+                            if (!this.state.page_button) {
+                                this.setState({init_count: 1, search_button: true, page_component: []});
                             }
                         }
 
                         setTimeout(() => {
 
                             var array = this.state.page_component;
-                            for (let i = 0; i <= this.state.initCount; i++) {
+                            for (let i = 0; i <= this.state.init_count; i++) {
                                 array.push(<button key={i + 1} onClick={this.callThisPage(i + 1)}> {i + 1} </button>);
                             }
                             this.setState({page_component: array});
