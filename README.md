@@ -31,7 +31,7 @@ Frontend 사용 기술 | React  | SPA 구현을 위해 사용하였습니다.
 ![table.png](./image/table.png)
 
 
-# Membory DB 접속 콘솔
+# Memory DB 접속 콘솔
 > localhost:8080/h2
 
 여러가지 이유로 DB의 데이터를 확인할 필요가 있을 때 접속하면 됩니다.
