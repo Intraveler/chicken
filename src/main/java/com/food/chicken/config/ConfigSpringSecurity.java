@@ -18,11 +18,7 @@ public class ConfigSpringSecurity extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) {
 
         web.ignoring().antMatchers(
-                "/swagger-ui.html/**"
-                , "/swagger-resources/**"
-                , "/v2/api-docs"
-                , "/webjars/**"
-                , "/css/**"
+                "/css/**"
                 , "/script/**"
                 , "image/**"
                 , "/fonts/**"
