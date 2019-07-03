@@ -148,22 +148,17 @@ public class SearchService {
         return location;
     }
 
-    private HttpEntity<String> getHeader() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-        headers.set(HttpHeaders.AUTHORIZATION, kakaoApiAuthPrefix + " " + kakaoApiAuthKey);
-        return new HttpEntity<>(headers);
-    }
-
     public String getKeywordHistoryByMember(String id) throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
         List<MySearchHistory> mySearchHistoryList = new ArrayList<>();
         Member member = memberRepository.findById(id);
-        SimpleDateFormat format = new SimpleDateFormat("yy.MM.dd.");
+        SimpleDateFormat format = new SimpleDateFormat("yy/MM/dd hh:mm:ss");
+
+        Pageable pageable = PageRequest.of(0, 10, new Sort(Sort.Direction.DESC, "lastSearchDate"));
 
         searchHistoryRepository
-                .findByMemberUidOrderByLastSearchDateDesc(member.getMemberUid())
+                .findByMemberUid(member.getMemberUid(), pageable)
                 .forEach(item -> {
                     MySearchHistory mySearchHistory = new MySearchHistory();
                     mySearchHistory.setKeyword(item.getKeyword());
@@ -186,5 +181,12 @@ public class SearchService {
         mapper.writeValue(out, populateKeywordList);
 
         return new String(out.toByteArray());
+    }
+
+    private HttpEntity<String> getHeader() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        headers.set(HttpHeaders.AUTHORIZATION, kakaoApiAuthPrefix + " " + kakaoApiAuthKey);
+        return new HttpEntity<>(headers);
     }
 }
