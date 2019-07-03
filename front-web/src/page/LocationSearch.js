@@ -73,6 +73,10 @@ class LocationSearch extends React.Component {
                     if (data === "success") {
                         this.setState({search_button: true, page_button: false});
 
+                        if (this.state.data.length === 0) {
+                            return;
+                        }
+
                         if (!this.state.search_button) {
                             this.setState({init_count: 1, search_button: true, page_component: []});
 
@@ -80,6 +84,10 @@ class LocationSearch extends React.Component {
                             if (!this.state.page_button) {
                                 this.setState({init_count: 1, search_button: true, page_component: []});
                             }
+                        }
+
+                        if (this.state.is_end === true) {
+                            this.setState({init_count: 0});
                         }
 
                         setTimeout(() => {
